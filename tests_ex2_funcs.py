@@ -34,6 +34,17 @@ class TestEx2Funcs(unittest.TestCase):
         self.assertEqual(lifo.rmv(), 2)
         self.assertEqual(lifo.rmv(), 1)
     
+    def test_rmv_empty(self):    
+        with self.assertRaises(IndexError) as context:
+            fifo = ex2_funcs.FIFO()
+            fifo.rmv()
+        self.assertEqual(str(context.exception), "empty")
+        
+        with self.assertRaises(IndexError) as context:
+            lifo = ex2_funcs.LIFO()
+            lifo.rmv()
+        self.assertEqual(str(context.exception), "empty")
+            
     
     
 if __name__ == '__main__':

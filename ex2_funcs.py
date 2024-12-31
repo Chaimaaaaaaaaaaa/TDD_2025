@@ -19,7 +19,7 @@ class FIFO:
     
     def rmv(self):
         if self.head is None:
-            print("empty")
+            raise IndexError ("empty")
         value = self.head.val
         self.head = self.head.next
         if self.head is None:
@@ -43,16 +43,29 @@ class FIFO:
 class LIFO:
     
     def __init__(self):
-        pass
+        self.head = None
 
     def add(self, item):
-        pass
+        new_node = Node(item)
+        new_node.next = self.head
+        self.head = new_node
 
     def rmv(self):
-        pass
+        if self.head is None:
+            raise IndexError ("empty")
+        value = self.head.val
+        self.head = self.head.next
+        return value
     
     def is_empty(self):
-        pass
+        if self.head is None:
+            return True
+        return False
     
     def len(self):
-        pass
+        count = 0
+        current = self.head
+        while current is not None:
+            count += 1
+            current = current.next
+        return count
