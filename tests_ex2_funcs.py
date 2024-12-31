@@ -18,7 +18,21 @@ class TestEx2Funcs(unittest.TestCase):
         self.assertEqual(fifo.rmv(), 2)
         self.assertEqual(fifo.rmv(), 3)
         
-        
+    # Tests LIFO
+    def tests_LIFO(self):
+        lifo = ex2_funcs.LIFO()
+        self.assertTrue(lifo.is_empty())
+        self.assertEqual(lifo.len(), 0)
+        lifo.add(1)
+        self.assertEqual(lifo.len(), 1) 
+        lifo.add(2)
+        self.assertEqual(lifo.len(), 2)
+        lifo.add(3)
+        self.assertEqual(lifo.len(), 3)
+        self.assertFalse(lifo.is_empty())
+        self.assertEqual(lifo.rmv(), 3)
+        self.assertEqual(lifo.rmv(), 2)
+        self.assertEqual(lifo.rmv(), 1)
     
     
     

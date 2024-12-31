@@ -38,3 +38,21 @@ class FIFO:
             count += 1
             current = current.next
         return count
+
+
+class LIFO:
+    
+    def __init__(self):
+        pass
+
+    def add(self, item):
+        pass
+
+    def rmv(self):
+        pass
+    
+    def is_empty(self):
+        pass
+    
+    def len(self):
+        pass
