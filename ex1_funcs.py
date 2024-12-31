@@ -19,4 +19,10 @@ def is_prime_number(n):
     return True
 
 def is_arithmetic_sequence(list):
-    pass
+    if len(list) < 2:
+        return False
+    diff = list[1] - list[0]
+    for i in range(1, len(list)):
+        if list[i] - list[i-1] != diff:
+            return False
+    return True
