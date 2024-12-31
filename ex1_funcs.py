@@ -11,7 +11,12 @@ def max_three_ints(a, b, c):
             return c
 
 def is_prime_number(n):
-    pass
+    if n <= 1:
+        return False
+    for i in range(2, n):
+        if n % i == 0:
+            return False
+    return True
 
 def is_arithmetic_sequence(list):
     pass

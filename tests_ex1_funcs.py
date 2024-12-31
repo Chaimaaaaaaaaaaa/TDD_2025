@@ -19,6 +19,8 @@ class TestEx1Funcs(unittest.TestCase):
         self.assertFalse(ex1_funcs.is_prime_number(1))
         self.assertFalse(ex1_funcs.is_prime_number(4))
         self.assertFalse(ex1_funcs.is_prime_number(6))
+        self.assertFalse(ex1_funcs.is_prime_number(0))
+        self.assertFalse(ex1_funcs.is_prime_number(-1))
         
     
 if __name__ == '__main__':
