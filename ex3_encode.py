@@ -5,11 +5,13 @@ class Encode:
     def encode_text(self,text):
         encode = ''
         for char in text:
-            if char.isalpha():
-                encode += self.shift_char(char)
-            else:
-                encode += char
+            encode += self.encode_char(char)
         return encode
+    
+    def encode_char(self, char):
+        if char.isalpha():
+            return self.shift_char(char)
+        return char
     
     def shift_char(self, char):
         base = ord('a') if char.islower() else ord('A')
