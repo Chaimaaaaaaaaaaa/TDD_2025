@@ -9,6 +9,8 @@ class TestEncode(unittest.TestCase):
         self.assertEqual(cesar.encode_text("Hello, World!"), "Khoor, Zruog!")
         self.assertEqual(cesar.encode_text("1234!"), "1234!")
         self.assertEqual(cesar.encode_text(""), "")
+        cesar_neg = Encode(-3)
+        self.assertEqual(cesar_neg.encode_text("Khoor, Zruog!"), "Hello, World!")
             
     @patch('builtins.input', side_effect=["chiffre de cesar", "10"])  # Simule l'entrée utilisateur
     @patch('builtins.print')  # Capture la sortie print
