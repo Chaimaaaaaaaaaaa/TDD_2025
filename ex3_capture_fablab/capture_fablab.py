@@ -1,21 +1,35 @@
 # Enregistrement de vidéo avec boutons start/stop et molette pour changer le frame rate                                                                                                                                                                                                                                                                                                                                
 import cv2
-from gpiozero import Button, LED
+from gpiozero import Button
 from datetime import datetime
 from time import sleep
 import lgpio
 
 # Pins de la molette
 GPIO = lgpio.gpiochip_open(0)
-lgpio.gpio_claim_output(GPIO, 17) # LED de démarrage
-lgpio.gpio_claim_output(GPIO, 21) # LED d'enregistrement
+START_LED_PIN = 17
+RECORD_LED_PIN = 21
+
+lgpio.gpio_claim_output(GPIO, START_LED_PIN)  # LED de démarrage
+lgpio.gpio_claim_output(GPIO, RECORD_LED_PIN)  # LED d'enregistrement
 
 # Boutons
-button_on = Button(3)
-button_off = Button(2,bounce_time=0.2)
+BUTTON_ON_PIN = 3
+BUTTON_OFF_PIN = 2
+
+button_on = Button(BUTTON_ON_PIN)
+button_off = Button(BUTTON_OFF_PIN, bounce_time=0.2)
 
 # Pour sortir de la boucle d'enregistrement
 stop_enrg = True
+
+# Fait clignoter une LED un certain nombre de fois.
+def blink_led(pin, times, interval):
+    for _ in range(times):
+        lgpio.gpio_write(GPIO, pin, 1)
+        sleep(interval)
+        lgpio.gpio_write(GPIO, pin, 0)
+        sleep(interval)
 
 # Interruption pour le bouton stop
 def init():
@@ -25,11 +39,9 @@ def init():
 def OFF():
     global stop_enrg
     stop_enrg = False
-    for _ in range(3):
-        lgpio.gpio_write(GPIO, 17, 1)
-        sleep(0.2)
-        lgpio.gpio_write(GPIO, 17, 0)
-        sleep(0.2)
+    # Clignote 3 fois pour indiquer que l'enregistrement est terminé
+    blink_led(17, 3, 0.2)
+    # La LED verte reste s'eteint pour indiquer que l'enregistrement est terminé
     lgpio.gpio_write(GPIO, 21, 0)
 
 # Retourne la valeur choisie par la molette + 1
@@ -45,11 +57,8 @@ def main():
         if button_on.is_pressed:
             stop_enrg = True
             # Lancement de l'enregistrement après 3 clignotements
-            for _ in range(3):
-                lgpio.gpio_write(GPIO, 17, 1)
-                sleep(0.2)
-                lgpio.gpio_write(GPIO, 17, 0)
-                sleep(0.2)
+            blink_led(17, 3, 0.2)
+            # La LED verte s'allume pour indiquer que l'enregistrement est en cours
             lgpio.gpio_write(GPIO, 21, 1)
             nom_fichier = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             video = cv2.VideoCapture(0)
@@ -77,10 +86,6 @@ def main():
 
 if __name__ == "__main__":
     # Clignote 2 fois pour indiquer que le programme est lancé
-    for _ in range(2):
-        lgpio.gpio_write(GPIO, 17, 1)
-        sleep(0.1)
-        lgpio.gpio_write(GPIO, 17, 0)
-        sleep(0.1)
+    blink_led(17, 2, 0.1)
     init()
     main()
