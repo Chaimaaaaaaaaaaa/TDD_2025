@@ -28,14 +28,23 @@ button_off = Button(BUTTON_OFF_PIN, bounce_time=0.2)
 
 ENREGISTREMENT = True
 
+
+def set_led(pin, etat):
+    """
+    Allume ou éteint la LED d'enregistrement.
+    1 pour allumer, 0 pour éteindre.
+    """
+    lgpio.gpio_write(GPIO, pin, etat)
+
+
 def blink_led(pin, times, interval):
     """
-    Fait clignoter une LED un certain nombre de fois.
+    Fait clignoter une LED un certain nombre de fois avec un intervalle donné.
     """
     for _ in range(times):
-        lgpio.gpio_write(GPIO, pin, 1)
+        set_led(pin, 1)
         sleep(interval)
-        lgpio.gpio_write(GPIO, pin, 0)
+        set_led(pin, 0)
         sleep(interval)
 
 
@@ -64,37 +73,41 @@ def stop_record():
     global ENREGISTREMENT
     ENREGISTREMENT = False
     # Clignote 3 fois pour indiquer que l'enregistrement est terminé
-    blink_led(17, 3, 0.2)
+    blink_led(START_LED_PIN, 3, 0.2)
     # La LED verte reste s'eteint pour indiquer que l'enregistrement est terminé
-    lgpio.gpio_write(GPIO, 21, 0)
+    set_led(RECORD_LED_PIN, 0)
 
-# Fonction pour l'enregistrement de la vidéo
+
 def start_record():
     """
     Démarre l'enregistrement de la vidéo.
     """
     global ENREGISTREMENT
     ENREGISTREMENT = True
-    blink_led(17, 3, 0.2) # Lancement de l'enregistrement après 3 clignotements
-    lgpio.gpio_write(GPIO, 21, 1) # La LED s'allume pour indiquer que l'enregistrement est en cours
+    blink_led(START_LED_PIN, 3, 0.2)
+    set_led(RECORD_LED_PIN, 1)
 
     date_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     nom_fichier = PATH + date_now + '.avi'
     video = cv2.VideoCapture(0) # pylint: disable=no-member
+    
     if not video.isOpened():
         print("Erreur de lecture du fichier")
         return
+    
     frame_width = int(video.get(3))
     frame_height = int(video.get(4))
     size = (frame_width, frame_height)
     fps = molette()
     print("Frame rate sélectionné: ", fps)
+    
     result = cv2.VideoWriter(   # pylint: disable=no-member
         nom_fichier,
         cv2.VideoWriter_fourcc(*'MJPG'),    # pylint: disable=no-member
         fps,
         size
     )
+    
     while ENREGISTREMENT: # Boucle d'enregistrement
         print("Enregistrement en cours")
         ret, frame = video.read()
@@ -102,6 +115,7 @@ def start_record():
             result.write(frame)
         else:
             break
+        
     # Relâcher tout à la fin
     video.release()
     result.release()
@@ -119,7 +133,7 @@ def main():
 
 if __name__ == "__main__":
     # Clignote 2 fois pour indiquer que le programme est lancé
-    blink_led(17, 2, 0.1)
+    blink_led(START_LED_PIN, 2, 0.1)
     init()
     main()
     
