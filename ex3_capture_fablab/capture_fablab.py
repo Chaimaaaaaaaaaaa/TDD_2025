@@ -20,19 +20,23 @@ class VideoCapture:
         # Chemin d'enregistrement des vidéos
         self.path = '/home/abc/Projet/Videos/'
 
+        # Dictionnaire pour les pins
+        self.config = {
+            'start_led_pin' : 17,
+            'record_led_pin' : 21,
+            'button_on_pin' : 3,
+            'button_off_pin' : 2
+        }
+
         # Pins de la molette
         self.gpio = lgpio.gpiochip_open(0)
-        self.start_led_pin = 17
-        self.record_led_pin = 21
 
-        lgpio.gpio_claim_output(self.gpio, self.start_led_pin)  # LED de démarrage
-        lgpio.gpio_claim_output(self.gpio, self.record_led_pin)  # LED d'enregistrement
+        lgpio.gpio_claim_output(self.gpio, self.config['start_led_pin'])  # LED de démarrage
+        lgpio.gpio_claim_output(self.gpio, self.config['record_led_pin'])  # LED d'enregistrement
 
         # Boutons
-        self.button_on_pin = 3
-        self.button_off_pin = 2
-        self.button_on = Button(self.button_on_pin)
-        self.button_off = Button(self.button_off_pin, bounce_time=0.2)
+        self.button_on = Button(self.config['button_on_pin'])
+        self.button_off = Button(self.config['button_off_pin'], bounce_time=0.2)
 
         self.enregistrement = True
 
@@ -76,9 +80,9 @@ class VideoCapture:
         """
         self.enregistrement = False
         # Clignote 3 fois pour indiquer que l'enregistrement est terminé
-        self.blink_led(self.start_led_pin, 3, 0.2)
+        self.blink_led(self.config['start_led_pin'], 3, 0.2)
         # La LED verte reste s'eteint pour indiquer que l'enregistrement est terminé
-        self.set_led(self.record_led_pin, 0)
+        self.set_led(self.config['record_led_pin'], 0)
 
 
     def start_record(self):
@@ -86,8 +90,8 @@ class VideoCapture:
         Démarre l'enregistrement de la vidéo.
         """
         self.enregistrement = True
-        self.blink_led(self.start_led_pin, 3, 0.2)
-        self.set_led(self.record_led_pin, 1)
+        self.blink_led(self.config['start_led_pin'], 3, 0.2)
+        self.set_led(self.config['record_led_pin'], 1)
 
         date_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         nom_fichier = self.path + date_now + '.avi'
@@ -132,7 +136,7 @@ def main():
     """
     video_capture = VideoCapture()
 
-    video_capture.blink_led(video_capture.start_led_pin, 2, 0.1)
+    video_capture.blink_led(video_capture.config['start_led_pin'], 2, 0.1)
 
     while True:
         if video_capture.button_on.is_pressed:
